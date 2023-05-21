@@ -24,7 +24,7 @@ const client = new MongoClient(uri, {
 async function run() {
     try {
         // Connect the client to the server	(optional starting in v4.7)
-        await client.connect();
+        // await client.connect();
 
         const toysCollection = client.db('dollsToy').collection('allToys');
 
@@ -50,13 +50,8 @@ async function run() {
             res.send(result)
         })
 
-        app.get('/allToys', async (req, res) => {
-            const subCategory = req.query.subCategory;
-            const filter = { subCategory: subCategory };
-            const result = await toysCollection.find(filter).toArray();
-            res.send(result)
-        })
-
+      
+     
         // updateToy
         app.put('/myToys/:id', async(req, res) => {
             const id = req.params.id;
