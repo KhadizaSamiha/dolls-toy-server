@@ -9,7 +9,6 @@ require('dotenv').config()
 app.use(cors());
 app.use(express.json());
 
-console.log(process.env.DB_PASS);
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.rfvro52.mongodb.net/?retryWrites=true&w=majority`;
 
@@ -40,6 +39,33 @@ async function run() {
             const result = await toysCollection.findOne(query);
             res.send(result);
         })
+
+        app.get('/myToys', async(req, res) =>{
+            const email = req.query.email;
+            const filter ={email: email};
+            const result = await toysCollection.find(filter).toArray();
+            res.send(result)
+        })
+        app.get('/allToys', async(req, res) =>{
+            const subCategory = req.query.subCategory;
+            const filter ={subCategory: subCategory};
+            const result = await toysCollection.find(filter).toArray();
+            res.send(result)
+        })
+        // app.get('/allToys/:email', async(req, res) =>{
+        //     console.log(req.params.email)
+        //     const result = await toysCollection
+        //     .find({ email: req.params.email}).toArray();
+        //     res.send(result);
+
+            
+        //     // let query = {};
+        //     // if(req.query?.email){
+        //     //     query = {email: req.query.email}
+        //     // }
+        //     // const result = await toysCollection.find(query).toArray();
+        //     // res.send(result);
+        // })
         app.post('/allToys', async(req, res) =>{
             const addToys = req.body;
             console.log(addToys);
