@@ -28,48 +28,67 @@ async function run() {
 
         const toysCollection = client.db('dollsToy').collection('allToys');
 
-        app.get('/allToys', async(req, res) =>{
+
+        // get all toy
+        app.get('/allToys', async (req, res) => {
             const cursor = toysCollection.find();
             const result = await cursor.toArray();
             res.send(result)
         })
-        app.get('/allToys/:id', async(req, res) =>{
+        // get allToy using id
+        app.get('/allToys/:id', async (req, res) => {
             const id = req.params.id;
-            const query = {_id : new ObjectId(id)};
+            const query = { _id: new ObjectId(id) };
             const result = await toysCollection.findOne(query);
             res.send(result);
         })
-
-        app.get('/myToys', async(req, res) =>{
+        // get myToy using email
+        app.get('/myToys', async (req, res) => {
             const email = req.query.email;
-            const filter ={email: email};
+            const filter = { email: email };
             const result = await toysCollection.find(filter).toArray();
             res.send(result)
         })
-        app.get('/allToys', async(req, res) =>{
-            const subCategory = req.query.subCategory;
-            const filter ={subCategory: subCategory};
-            const result = await toysCollection.find(filter).toArray();
-            res.send(result)
-        })
-        // app.get('/allToys/:email', async(req, res) =>{
-        //     console.log(req.params.email)
-        //     const result = await toysCollection
-        //     .find({ email: req.params.email}).toArray();
-        //     res.send(result);
 
-            
-        //     // let query = {};
-        //     // if(req.query?.email){
-        //     //     query = {email: req.query.email}
-        //     // }
-        //     // const result = await toysCollection.find(query).toArray();
-        //     // res.send(result);
-        // })
-        app.post('/allToys', async(req, res) =>{
+        app.get('/allToys', async (req, res) => {
+            const subCategory = req.query.subCategory;
+            const filter = { subCategory: subCategory };
+            const result = await toysCollection.find(filter).toArray();
+            res.send(result)
+        })
+
+        // updateToy
+        app.put('/myToys/:id', async(req, res) => {
+            const id = req.params.id;
+            const filter = { _id: new ObjectId(id) };
+            const options = { upsert: true };
+            const updateToy = req.body;
+            const Toy = {
+                $set: {
+                    name: updateToy.name,
+                    seller: updateToy.seller,
+                    subCategory: updateToy.subCategory,
+                    quantity: updateToy.quantity,
+                }
+            }
+            const result = await toysCollection.updateOne(filter, Toy, options)
+            res.send(result);
+    
+
+        })
+
+        // delete toy
+        app.delete('/myToys/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await toysCollection.deleteOne(query);
+            res.send(result)
+        })
+        // post addToy
+        app.post('/allToys', async (req, res) => {
             const addToys = req.body;
             console.log(addToys);
-            const result =await toysCollection.insertOne(addToys);
+            const result = await toysCollection.insertOne(addToys);
             res.send(result)
         })
 
